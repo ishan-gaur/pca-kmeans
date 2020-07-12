@@ -1,9 +1,11 @@
-from pathlib import Path
-import numpy as np
-import random
 import torch
+import timeit
+import random
+import numpy as np
+from pathlib import Path
+import matplotlib.pyplot as plt
 
-def kmeans(k, X, epochs=1):
+def kmeans_torch(k, X, epochs=100):
     """Performs Principle Component Analysis
     Args:
         X: torch tensor for the design matrix (containing example data)
@@ -22,29 +24,22 @@ def kmeans(k, X, epochs=1):
     C = torch.empty(k, d)
     for i, j in enumerate(init_centr):
         C[i] = X[j]
-    # print(centroids)
-    # print(init_centr)
-    # Calc distances for each vector
+    # Training loop
     dist = torch.empty(n, k)
     pred = torch.empty(n)
-    # print(C)
     for _ in range(epochs):
         for j, c in enumerate(C):
-            # print(c)
             dist[:,j] = torch.norm(torch.sub(X, c), dim=1)
         pred = torch.argmin(dist, 1)
-        # for i in range(n): pred[i] = torch.argmin(X, 1)
         cts = torch.zeros(k) * 1e-20 # to prevent division by 0
         C = torch.zeros(k, d)
         for i, x in enumerate(X):
             cts[pred[i]] += 1
             C[pred[i]] += X[i]
-        # print('pred:\n' + str(pred))
         C = torch.div(C, torch.reshape(cts, (-1, 1)))
-        # print(C)
     return C, pred
 
-def test():
+def test(kmeans=kmeans_torch):
     """Tests the PCA using supplied data file
 
     Todo:
@@ -52,12 +47,24 @@ def test():
         how many of the first n columns to use
         * Visualize results somehow as printed table, matplotlib, etc
     """
+    # Get data and run algorithm to demonstrate functionality
     data_path = Path('Data/iris.data')
     data = np.genfromtxt(data_path, delimiter=',', dtype='str')
     X = torch.from_numpy(data[:,:4].astype('float64'))
     labels = data[:,4]
-    C, pred = kmeans(5, X)
-    print(pred)
     C, pred = kmeans(3, X)
     print(pred)
+
+    # Time and generate histogram
+    def timing_wrapper():
+        kmeans(3, X)
+    x = []
+    for i in range(500):
+        print(i)
+        x.append(timeit.timeit(timing_wrapper, number=1))
+    x = np.asarray(x)
+    print(np.mean(x), np.std(x))
+    plt.hist(x, bins=50)
+    plt.show()
+
 test()
