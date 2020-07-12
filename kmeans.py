@@ -6,7 +6,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 def kmeans_torch(k, X, epochs=100):
-    """Performs Principle Component Analysis
+    """Performs K-means clustering
     Args:
         X: torch tensor for the design matrix (containing example data)
         center: if True shifts distribution mean to
@@ -40,7 +40,7 @@ def kmeans_torch(k, X, epochs=100):
     return C, pred
 
 def test(kmeans=kmeans_torch):
-    """Tests the PCA using supplied data file
+    """Tests and times the kmeans using supplied data file
 
     Todo:
         * Add support for different datafiles with argparse and specify range
@@ -67,4 +67,4 @@ def test(kmeans=kmeans_torch):
     plt.hist(x, bins=50)
     plt.show()
 
-test()
+# test()

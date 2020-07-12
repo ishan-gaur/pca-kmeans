@@ -9,7 +9,7 @@ def pca_torch(X, center=True):
     Args:
         X: torch tensor for the design matrix (containing example data)
         center: if True shifts distribution mean to 0
-    
+
     Returns:
         (S, W): sv is a list of the singular values for each vector; W is the matrix,
         whose columns are the new basis (principle component vector)
@@ -47,4 +47,4 @@ def test(pca=pca_torch):
     plt.hist(x, bins=50)
     plt.show()
 
-test()
+# test()
